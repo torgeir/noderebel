@@ -1,1 +1,3 @@
 Launching an app with noderebel app.js will copy all from the current directory to a tmp dir and further on compare diffs with these files as  changes to your files are made. If any changes are found, noderebel will restart your node.js app.
+
+Only tested on OS X, though I reckon the pid hack is the only one specific for OS X, as I did not happen to find a pidof command..
