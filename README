@@ -1,0 +1,1 @@
+Launching an app with noderebel app.js will copy all from the current directory to a tmp dir and further on compare diffs with these files as  changes to your files are made. If any changes are found, noderebel will restart your node.js app.
