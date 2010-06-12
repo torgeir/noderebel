@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Launching an app with noderebel app.js will copy all from the current directory to a tmp dir
+# and further on compare diffs with these files as changes to your files are made. If any changes
+# are found, noderebel will restart your node.js app.
+
+# Start node js app in background 
+node $1 &
+
+# Create tmp dir
+tmpdir=/tmp
+dir=$tmpdir/$1
+mkdir $dir
+
+# Copy all current files from working dir to tmp dir
+cp * $dir
+
+# Find own name
+self=`echo $0 | sed -e 's#\.\/##'`
+
+while true; do
+	for f in $( ls | grep -v $self ); do
+		if [ -e $dir/$f ]; then
+			
+			# Compute diff
+			diff=`diff -q $f $dir/$f`
+
+			if [ "$diff" != "" ]; then
+				echo "\n#############################"
+				echo "Change detected, restarting.."
+				echo "#############################"
+				
+				# Hack to find pid of currently running node.js app
+				# File is listed as "node your-app.js"
+				pid=`ps -f | grep "node $1" | grep -v "grep" | awk '{if(\$9="$1") print \$2}'`
+				
+				# Send interrupt
+				kill -n 2 $pid
+				
+				# Restart app
+				node $1 &
+				cp * $dir
+				
+				break
+			fi
+		fi
+	done
+	
+	sleep 1
+	
+	# Clean up
+	trap "echo 'Deleting temporary files..'; rm -r $dir; echo 'Bye.'" 0
+
+done
+
