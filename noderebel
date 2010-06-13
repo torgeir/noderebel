@@ -27,7 +27,7 @@ dir=$tmpdir/$1
 mkdir $dir
 
 # Copy all current files from working dir to tmp dir
-cp * $dir
+cp -R * $dir
 
 # Find own name
 self=`echo $0 | sed -e 's#\.\/##'`
@@ -53,7 +53,7 @@ while true; do
 				
 				# Restart app
 				node $1 &
-				cp * $dir
+				cp -R * $dir
 				
 				break
 			fi
